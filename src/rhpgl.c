@@ -1,0 +1,133 @@
+Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
+		double width, double height, Rboolean debug, Rboolean xmlHeader,
+		Rboolean onefile) {
+	HPGLDesc *ptd;
+
+	if (!(ptd = (HPGLDesc *) malloc(sizeof(HPGLDesc))))
+		return FALSE;
+
+	strcpy(ptd->filename, filename);
+
+	dd->startfill = R_GE_str2col(bg);
+	dd->startcol = R_GE_str2col(fg);
+	dd->startps = 10;
+	dd->startlty = 0;
+	dd->startfont = 1;
+	dd->startgamma = 1;
+
+	dd->activate = HPGL_Activate;
+	dd->deactivate = HPGL_Deactivate;
+	dd->close = HPGL_Close;
+	dd->clip = HPGL_Clip;
+	dd->size = HPGL_Size;
+	dd->newPage = HPGL_NewPage;
+	dd->line = HPGL_Line;
+	dd->text = HPGL_Text;
+	dd->textUTF8 = HPGL_Text; // UTF-8 support
+	dd->strWidth = HPGL_StrWidth;
+	dd->strWidthUTF8 = HPGL_StrWidth; // UTF-8 support
+	dd->rect = HPGL_Rect;
+	dd->circle = HPGL_Circle;
+	dd->polygon = HPGL_Polygon;
+	dd->polyline = HPGL_Polyline;
+	dd->locator = HPGL_Locator;
+	dd->mode = HPGL_Mode;
+	dd->metricInfo = HPGL_MetricInfo;
+	dd->cap = HPGL_Cap; // not implemented
+	dd->raster = HPGL_Raster; // not implemented
+	
+	/* UTF-8 support */
+	dd->wantSymbolUTF8 = 1;
+	dd->hasTextUTF8 = 1;
+	
+	/* Screen Dimensions in Pixels */
+
+	dd->left = 0; /* left */
+	dd->right = in2dots(width);/* right */
+	dd->bottom = in2dots(height); /* bottom */
+	dd->top = 0; /* top */
+	ptd->width = width;
+	ptd->height = height;
+	ptd->xmlHeader = xmlHeader;
+	ptd->onefile = onefile;
+
+	if (!HPGL_Open(dd, ptd))
+		return FALSE;
+
+	/* Base Pointsize */
+	/* Nominal Character Sizes in Pixels */
+
+	dd->cra[0] = (6.0 / 12.0) * 10.0;
+	dd->cra[1] = (10.0 / 12.0) * 10.0;
+
+	/* Character Addressing Offsets */
+	/* These offsets should center a single */
+	/* plotting character over the plotting point. */
+	/* Pure guesswork and eyeballing ... */
+
+	dd->xCharOffset = 0; /*0.4900;*/
+	dd->yCharOffset = 0; /*0.3333;*/
+	dd->yLineBias = 0; /*0.1;*/
+
+	/* Inches per Raster Unit */
+	/* We use printer points, i.e. 72.27 dots per inch : */
+	dd->ipr[0] = dd->ipr[1] = 1. / DOTSperIN;
+
+	dd->canClip = FALSE;
+	dd->canHAdj = 0;
+	dd->canChangeGamma = FALSE;
+
+	ptd->lty = 1;
+	ptd->pageno = 0;
+	ptd->debug = debug;
+
+	dd->deviceSpecific = (void *) ptd;
+	dd->displayListOn = FALSE;
+	return TRUE;
+}
+
+
+static pGEDevDesc RHpglDevice(char **file, char **bg, char **fg, double *width,
+		double *height, int *debug, int *xmlHeader, int *onefile) {
+	pGEDevDesc dd;
+	pDevDesc dev;
+
+	if (debug[0] == NA_LOGICAL)
+		debug = FALSE;
+
+	R_GE_checkVersionOrDie(R_GE_version);
+	R_CheckDeviceAvailable();
+	BEGIN_SUSPEND_INTERRUPTS {
+		if (!(dev = (pDevDesc) Calloc(1, NewDevDesc)))
+			error("unable to allocate memory for NewDevDesc");
+
+		if (!HPGLDeviceDriver(dev, file[0], bg[0], fg[0], width[0], height[0],
+				debug[0], xmlHeader[0], onefile[0])) {
+			free(dev);
+			error("unable to start HPGL device");
+		}
+		dd = GEcreateDevDesc(dev);
+
+#if R_VERSION < R_Version(2,7,0)
+		gsetVar(install(".Device"), mkString("devHPGL"), R_NilValue);
+		Rf_addDevice((DevDesc*) dd);
+#else
+		GEaddDevice2(dd, "devHPGL");
+#endif
+		GEinitDisplayList(dd);
+	}END_SUSPEND_INTERRUPTS;
+
+	return (dd);
+}
+
+void do_HPGL(char **file, char **bg, char **fg, double *width, double *height,
+		int *debug, int *xmlHeader, int *onefile) {
+	char *vmax;
+
+	vmax = vmaxget();
+
+	RHpglDevice(file, bg, fg, width, height, debug, xmlHeader, onefile);
+
+	vmaxset(vmax);
+}
+
