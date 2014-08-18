@@ -62,7 +62,6 @@ static void HPGL_Line(double x1, double y1, double x2, double y2,
 
 static void HPGL_Polyline(int n, double *x, double *y, const pGEcontext gc,
 		pDevDesc dd) {
-	int i;
 	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
     fprintf(ptd->texfp, "PU;PD");
 	for (i = 0; i < n; i++) {
@@ -85,6 +84,42 @@ static void HPGL_Rect(double x0, double y0, double x1, double y1,
     fprintf(pty->texfp, "SP%d;", gc->col);
     fprintf(pty->texfp, "PW%d;", gc->lwd);
 	fprintf(ptd->texfp, "RA%d,%d;", x0, y0);
+}
+
+static void HPGL_Circle(double x, double y, double r, const pGEcontext gc,
+		pDevDesc dd) {
+	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
+
+	fprintf(ptd->texfp, "PA%d,%d;", x, y);
+    fprintf(pty->texfp, "FT%d;", gc->fill, 1 - (gc->lty));
+    fprintf(pty->texfp, "SP%d;", gc->col);
+    fprintf(pty->texfp, "PW%d;", gc->lwd);
+	fprintf(ptd->texfp, "CI%d;", r);
+}
+
+static void HPGL_Polygon(int n, double *x, double *y, const pGEcontext gc,
+		pDevDesc dd) {
+	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
+
+    fprintf(ptd->texfp, "PA;PM0;PD");
+	for (i = 0; i < n; i++) {
+        if (i==0) {
+            fprintf(ptd->texfp, "%d,%d", x[i], y[i]);
+        } else {
+            fprintf(ptd->texfp, ",%d,%d", x[i], y[i]);
+        }
+	}
+    fprintf(ptd->texfp, ";PM2;EP;");
+}
+
+static void HPGL_Text(double x, double y, const char *str, double rot,
+		double hadj, const pGEcontext gc, pDevDesc dd) {
+	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
+
+	fprintf(ptd->texfp, "DT%c;", 3);
+	fprintf(ptd->texfp, "LB");
+	fprintf(ptd->texfp, str);
+	fprintf(ptd->texfp, ";");
 }
 
 Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
