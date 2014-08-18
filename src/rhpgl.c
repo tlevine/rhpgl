@@ -122,6 +122,11 @@ static void HPGL_Text(double x, double y, const char *str, double rot,
 	fprintf(ptd->texfp, ";");
 }
 
+static Rboolean SVG_Locator(double *x, double *y, pDevDesc dd) {
+	fprintf(ptd->texfp, "OD;");
+	return FALSE;
+}
+
 Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
 		double width, double height, Rboolean debug, Rboolean xmlHeader,
 		Rboolean onefile) {
