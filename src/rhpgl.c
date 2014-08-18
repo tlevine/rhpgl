@@ -64,12 +64,27 @@ static void HPGL_Polyline(int n, double *x, double *y, const pGEcontext gc,
 		pDevDesc dd) {
 	int i;
 	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
+    fprintf(ptd->texfp, "PU;PD");
 	for (i = 0; i < n; i++) {
-        if (i == 0) {
-            fprintf(ptd->texfp, "PU%d,%d;", x[i], y[i]);
+        if (i==0) {
+            fprintf(ptd->texfp, "%d,%d", x[i], y[i]);
+        } else {
+            fprintf(ptd->texfp, ",%d,%d", x[i], y[i]);
         }
-        fprintf(ptd->texfp, "PD%d,%d;", x[i], y[i]);
 	}
+    fprintf(ptd->texfp, ";");
+}
+
+static void HPGL_Rect(double x0, double y0, double x1, double y1,
+		const pGEcontext gc, pDevDesc dd) {
+	double tmp;
+	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
+
+	fprintf(ptd->texfp, "PA%d,%d;", x0, y0);
+    fprintf(pty->texfp, "FT%d;", gc->fill, 1 - (gc->lty));
+    fprintf(pty->texfp, "SP%d;", gc->col);
+    fprintf(pty->texfp, "PW%d;", gc->lwd);
+	fprintf(ptd->texfp, "RA%d,%d;", x0, y0);
 }
 
 Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
