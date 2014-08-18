@@ -1,3 +1,77 @@
+typedef struct {
+	FILE *texfp;
+	char filename[1024];
+	int pageno;
+	int landscape;
+	double width;
+	double height;
+	double pagewidth;
+	double pageheight;
+	double xlast;
+	double ylast;
+	double clipleft, clipright, cliptop, clipbottom;
+	double clippedx0, clippedy0, clippedx1, clippedy1;
+
+	double cex;
+	double srt;
+	int lty;
+	int lwd;
+	int col;
+	int fg;
+	int bg;
+	int fontsize;
+	int fontface;
+	Rboolean debug;
+	Rboolean xmlHeader;
+	Rboolean onefile; /* drop headers etc*/
+
+} HPGLDesc;
+
+static void HPGL_Activate( pDevDesc);
+static void HPGL_Circle(double x, double y, double r, const pGEcontext gc,
+		pDevDesc dd);
+static void HPGL_Clip(double, double, double, double, pDevDesc);
+static void HPGL_Close( pDevDesc);
+static void HPGL_Deactivate( pDevDesc);
+static void HPGL_Line(double x1, double y1, double x2, double y2,
+		const pGEcontext gc, pDevDesc dd);
+static Rboolean HPGL_Locator(double*, double*, pDevDesc);
+static void HPGL_Mode(int, pDevDesc);
+static void HPGL_NewPage(const pGEcontext gc, pDevDesc dd);
+static Rboolean HPGL_Open( pDevDesc, HPGLDesc*);
+static void HPGL_Polygon(int n, double *x, double *y, const pGEcontext gc,
+		pDevDesc dd);
+static void HPGL_Polyline(int n, double *x, double *y, const pGEcontext gc,
+		pDevDesc dd);
+static void HPGL_Rect(double x0, double y0, double x1, double y1,
+		const pGEcontext gc, pDevDesc dd);
+static void HPGL_Size(double *left, double *right, double *bottom, double *top,
+		pDevDesc dd);
+
+static double HPGL_StrWidth(const char *str, const pGEcontext gc, pDevDesc dd);
+static void HPGL_Text(double x, double y, const char *str, double rot,
+		double hadj, const pGEcontext gc, pDevDesc dd);
+static void HPGL_MetricInfo(int c, const pGEcontext gc, double* ascent,
+		double* descent, double* width, pDevDesc dd);
+
+static void HPGL_Line(double x1, double y1, double x2, double y2,
+		const pGEcontext gc, pDevDesc dd) {
+	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
+	fprintf(ptd->texfp, "PU%d,%d;PD%d,%d;", x1, y1, x2, y2);
+}
+
+static void HPGL_Polyline(int n, double *x, double *y, const pGEcontext gc,
+		pDevDesc dd) {
+	int i;
+	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
+	for (i = 0; i < n; i++) {
+        if (i == 0) {
+            fprintf(ptd->texfp, "PU%d,%d;", x[i], y[i]);
+        }
+        fprintf(ptd->texfp, "PD%d,%d;", x[i], y[i]);
+	}
+}
+
 Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
 		double width, double height, Rboolean debug, Rboolean xmlHeader,
 		Rboolean onefile) {
