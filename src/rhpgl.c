@@ -115,6 +115,12 @@ static void HPGL_Polyline(int n, double *x, double *y, const pGEcontext gc,
     fprintf(ptd->texfp, ";");
 }
 
+static double HPGL_StrWidth(const char *str, const pGEcontext gc, pDevDesc dd) {
+	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
+	// size = gc->cex * gc->ps + 0.5;
+    return gc->cex;
+}
+
 static void HPGL_Rect(double x0, double y0, double x1, double y1,
 		const pGEcontext gc, pDevDesc dd) {
 	double tmp;
