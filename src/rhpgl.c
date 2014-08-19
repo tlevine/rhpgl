@@ -54,6 +54,13 @@ static void HPGL_Text(double x, double y, const char *str, double rot,
 static void HPGL_MetricInfo(int c, const pGEcontext gc, double* ascent,
 		double* descent, double* width, pDevDesc dd);
 
+
+static void HPGL_Activate(pDevDesc dd) {
+}
+
+static void HPGL_Deactivate(pDevDesc dd) {
+}
+
 static void HPGL_Line(double x1, double y1, double x2, double y2,
 		const pGEcontext gc, pDevDesc dd) {
 	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
