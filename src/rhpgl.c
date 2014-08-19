@@ -89,6 +89,12 @@ static void HPGL_NewPage(const pGEcontext gc, pDevDesc dd) {
 	fprintf(ptd->texfp, "PG;");
 }
 
+static void HPGL_Close(pDevDesc dd) {
+	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
+	fclose(ptd->texfp);
+	free(ptd);
+}
+
 static void HPGL_Line(double x1, double y1, double x2, double y2,
 		const pGEcontext gc, pDevDesc dd) {
 	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
@@ -167,9 +173,25 @@ static void HPGL_Text(double x, double y, const char *str, double rot,
 	fprintf(ptd->texfp, ";");
 }
 
-static Rboolean SVG_Locator(double *x, double *y, pDevDesc dd) {
+static Rboolean HPGL_Locator(double *x, double *y, pDevDesc dd) {
 	fprintf(ptd->texfp, "OD;");
 	return FALSE;
+}
+
+static void HPGL_Mode(int mode, pDevDesc dd) {
+}
+
+static SEXP HPGL_Cap(pDevDesc dd) {
+    SEXP raster = R_NilValue;
+    return raster;
+}
+
+static void HPGL_Raster(unsigned int *raster, int w, int h,
+		       double x, double y,
+		       double width, double height,
+		       double rot,
+		       Rboolean interpolate,
+		       const pGEcontext gc, pDevDesc dd) {
 }
 
 Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
