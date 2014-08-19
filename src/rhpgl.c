@@ -61,6 +61,34 @@ static void HPGL_Activate(pDevDesc dd) {
 static void HPGL_Deactivate(pDevDesc dd) {
 }
 
+static void HPGL_MetricInfo(int c, const pGEcontext gc, double* ascent,
+		double* descent, double* width, pDevDesc dd) {
+		
+	//	Rboolean Unicode = mbcslocale && (gc->fontface != 5);
+    //     if (c < 0) { Unicode = TRUE; c = -c; }
+    //     if(Unicode) UniCharMetric(c, ...); else CharMetric(c, ...);
+	/* metric information not available => return 0,0,0 */
+	*ascent = 0.0;
+	*descent = 0.0;
+	*width = 0.0;
+}
+
+static Rboolean HPGL_Open(pDevDesc dd, HPGLDesc *ptd) {
+	ptd->debug = FALSE;
+	if (!(ptd->texfp = (FILE *) fopen(R_ExpandFileName(ptd->filename), "w")))
+		return FALSE;
+
+	fprintf(ptd->texfp, "IN;IP;");
+	fprintf(ptd->textfp, "SP%d;", dd->startcol);
+	// dd->startfill;
+	return TRUE;
+}
+
+static void HPGL_NewPage(const pGEcontext gc, pDevDesc dd) {
+	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
+	fprintf(ptd->texfp, "PG;");
+}
+
 static void HPGL_Line(double x1, double y1, double x2, double y2,
 		const pGEcontext gc, pDevDesc dd) {
 	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
@@ -87,7 +115,10 @@ static void HPGL_Rect(double x0, double y0, double x1, double y1,
 	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
 
 	fprintf(ptd->texfp, "PA%d,%d;", x0, y0);
-    fprintf(pty->texfp, "FT%d;", gc->fill, 1 - (gc->lty));
+    // gc->density is lines per inch
+    // Second argument of FT is distance between lines in plotter units
+    fprintf(pty->texfp, "FT3,%d,%d;", (40 * 250)/(gc->density), gc->angle);
+    // gc->fill,
     fprintf(pty->texfp, "SP%d;", gc->col);
     fprintf(pty->texfp, "PW%d;", gc->lwd);
 	fprintf(ptd->texfp, "RA%d,%d;", x0, y0);
