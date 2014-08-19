@@ -114,14 +114,21 @@ static void HPGL_Rect(double x0, double y0, double x1, double y1,
 	double tmp;
 	HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
 
-	fprintf(ptd->texfp, "PA%d,%d;", x0, y0);
-    // gc->density is lines per inch
-    // Second argument of FT is distance between lines in plotter units
-    fprintf(pty->texfp, "FT3,%d,%d;", (40 * 250)/(gc->density), gc->angle);
-    // gc->fill,
-    fprintf(pty->texfp, "SP%d;", gc->col);
-    fprintf(pty->texfp, "PW%d;", gc->lwd);
-	fprintf(ptd->texfp, "RA%d,%d;", x0, y0);
+    if (gc->col) {
+        // gc->density is lines per inch
+        // Second argument of FT is distance between lines in plotter units
+        fprintf(pty->texfp, "FT3,%d,%d;", (40 * 250)/(gc->density), gc->angle);
+        fprintf(pty->texfp, "SP%d;", gc->col);
+        fprintf(pty->texfp, "PW%d;", gc->lwd);
+        fprintf(ptd->texfp, "PA%d,%d;", x0, y0);
+        fprintf(ptd->texfp, "RA%d,%d;", x0, y0);
+    }
+    if (gc->border) {
+        fprintf(pty->texfp, "SP%d;", gc->border);
+        fprintf(pty->texfp, "PW%d;", gc->lwd);
+        fprintf(ptd->texfp, "PA%d,%d;", x0, y0);
+        fprintf(ptd->texfp, "EA%d,%d;", x0, y0);
+    }
 }
 
 static void HPGL_Circle(double x, double y, double r, const pGEcontext gc,
