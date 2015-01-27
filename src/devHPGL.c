@@ -130,6 +130,14 @@ static void HPGL_NewPage(const pGEcontext gc, pDevDesc dd) {
   fprintf(ptd->texfp, "PG;");
 }
 
+static void HPGL_Size(double *left, double *right, double *bottom, double *top,
+                      pDevDesc dd) {
+  *left = dd->left;
+  *right = dd->right;
+  *bottom = dd->bottom;
+  *top = dd->top;
+}
+
 static void HPGL_Close(pDevDesc dd) {
   HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
   fclose(ptd->texfp);
