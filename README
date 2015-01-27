@@ -5,6 +5,10 @@ Example
   plot(iris)
   dev.off()
 
+View the file with hp2xx
+
+  hp2xx /tmp/plot.hpgl
+
 Helpful help
 
 * http://cran.r-project.org/doc/manuals/r-release/R-ints.html
