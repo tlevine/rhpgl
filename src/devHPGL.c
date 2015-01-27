@@ -161,15 +161,15 @@ static void HPGL_Rect(double x0, double y0, double x1, double y1,
   if (gc->col) {
     // gc->density is lines per inch
     // Second argument of FT is distance between lines in plotter units
-    fprintf(pty->texfp, "FT3,%d,%d;", (40 * 250)/(gc->density), gc->angle);
-    fprintf(pty->texfp, "SP%d;", gc->col);
-    fprintf(pty->texfp, "PW%d;", gc->lwd);
+    fprintf(ptd->texfp, "FT3,%d,%d;", (40 * 250)/(gc->density), gc->angle);
+    fprintf(ptd->texfp, "SP%d;", gc->col);
+    fprintf(ptd->texfp, "PW%d;", gc->lwd);
     fprintf(ptd->texfp, "PA%d,%d;", x0, y0);
     fprintf(ptd->texfp, "RA%d,%d;", x0, y0);
   }
   if (gc->border) {
-    fprintf(pty->texfp, "SP%d;", gc->border);
-    fprintf(pty->texfp, "PW%d;", gc->lwd);
+    fprintf(ptd->texfp, "SP%d;", gc->border);
+    fprintf(ptd->texfp, "PW%d;", gc->lwd);
     fprintf(ptd->texfp, "PA%d,%d;", x0, y0);
     fprintf(ptd->texfp, "EA%d,%d;", x0, y0);
   }
@@ -180,9 +180,9 @@ static void HPGL_Circle(double x, double y, double r, const pGEcontext gc,
   HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
 
   fprintf(ptd->texfp, "PA%d,%d;", x, y);
-  fprintf(pty->texfp, "FT%d;", gc->fill, 1 - (gc->lty));
-  fprintf(pty->texfp, "SP%d;", gc->col);
-  fprintf(pty->texfp, "PW%d;", gc->lwd);
+  fprintf(ptd->texfp, "FT%d;", gc->fill, 1 - (gc->lty));
+  fprintf(ptd->texfp, "SP%d;", gc->col);
+  fprintf(ptd->texfp, "PW%d;", gc->lwd);
   fprintf(ptd->texfp, "CI%d;", r);
 }
 
@@ -191,6 +191,7 @@ static void HPGL_Polygon(int n, double *x, double *y, const pGEcontext gc,
   HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
 
   fprintf(ptd->texfp, "PA;PM0;PD");
+  int i;
   for (i = 0; i < n; i++) {
     if (i==0) {
       fprintf(ptd->texfp, "%d,%d", x[i], y[i]);
