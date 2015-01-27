@@ -128,7 +128,7 @@ static void HPGL_Close(pDevDesc dd) {
 }
 
 static void HPGL_Line(double x1, double y1, double x2, double y2,
-    const pGEcontext gc, pDevDesc dd) {
+                      const pGEcontext gc, pDevDesc dd) {
   HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
   fprintf(ptd->texfp, "PU%d,%d;PD%d,%d;", x1, y1, x2, y2);
 }
