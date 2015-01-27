@@ -116,6 +116,15 @@ static Rboolean HPGL_Open(pDevDesc dd, HPGLDesc *ptd) {
   return TRUE;
 }
 
+static void HPGL_Clip(double x0, double x1, double y0, double y1, pDevDesc dd) {
+  HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
+
+  ptd->clipleft = x0;
+  ptd->clipright = x1;
+  ptd->clipbottom = y0;
+  ptd->cliptop = y1;
+}
+
 static void HPGL_NewPage(const pGEcontext gc, pDevDesc dd) {
   HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
   fprintf(ptd->texfp, "PG;");
