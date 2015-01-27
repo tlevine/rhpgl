@@ -213,7 +213,7 @@ static void HPGL_Text(double x, double y, const char *str, double rot,
 }
 
 static Rboolean HPGL_Locator(double *x, double *y, pDevDesc dd) {
-	fprintf(ptd->texfp, "OD;");
+  //fprintf(ptd->texfp, "OD;");
 	return FALSE;
 }
 
