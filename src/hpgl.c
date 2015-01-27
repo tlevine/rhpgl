@@ -370,7 +370,7 @@ static pGEDevDesc RHpglDevice(char **file, char **bg, char **fg, double *width,
       gsetVar(install(".Device"), mkString("hpgl"), R_NilValue);
       Rf_addDevice((DevDesc*) dd);
     #else
-      GEaddDevice2(dd, "devHPGL");
+      GEaddDevice2(dd, "hpgl");
     #endif
       GEinitDisplayList(dd);
   }END_SUSPEND_INTERRUPTS;
