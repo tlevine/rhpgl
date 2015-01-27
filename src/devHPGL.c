@@ -1,3 +1,36 @@
+#include <string.h>
+ 
+#include "R.h"
+#include "Rversion.h"
+
+#include "Rinternals.h"
+#include "R_ext/GraphicsEngine.h"
+
+#if R_VERSION < R_Version(2,7,0)
+# include "Rgraphics.h"
+# include "Rdevices.h"
+# include "R_ext/GraphicsDevice.h"
+typedef GEDevDesc* pGEDevDesc;
+typedef NewDevDesc* pDevDesc;
+typedef R_GE_gcontext* pGEcontext;
+#endif
+
+#if R_VERSION >= R_Version(2,8,0)
+#ifndef NewDevDesc
+#define NewDevDesc DevDesc
+#endif
+#endif
+
+#ifndef BEGIN_SUSPEND_INTERRUPTS
+# define BEGIN_SUSPEND_INTERRUPTS
+# define END_SUSPEND_INTERRUPTS
+#endif
+
+/* device-specific information per SVG device */
+
+#define DOTSperIN       72.27
+#define in2dots(x)      (DOTSperIN * x)
+
 typedef struct {
 	FILE *texfp;
 	char filename[1024];
@@ -79,7 +112,7 @@ static Rboolean HPGL_Open(pDevDesc dd, HPGLDesc *ptd) {
 		return FALSE;
 
 	fprintf(ptd->texfp, "IN;IP;");
-	fprintf(ptd->textfp, "SP%d;", dd->startcol);
+	fprintf(ptd->texfp, "SP%d;", dd->startcol);
 	// dd->startfill;
 	return TRUE;
 }
