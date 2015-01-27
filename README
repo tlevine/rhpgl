@@ -1,3 +1,10 @@
+Example
+
+  library(rhpgl)
+  hpgl('/tmp/plot.hpgl')
+  plot(iris)
+  dev.off()
+
 Helpful help
 
 * http://cran.r-project.org/doc/manuals/r-release/R-ints.html
