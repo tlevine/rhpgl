@@ -367,7 +367,7 @@ static pGEDevDesc RHpglDevice(char **file, char **bg, char **fg, double *width,
     dd = GEcreateDevDesc(dev);
     
     #if R_VERSION < R_Version(2,7,0)
-      gsetVar(install(".Device"), mkString("devHPGL"), R_NilValue);
+      gsetVar(install(".Device"), mkString("hpgl"), R_NilValue);
       Rf_addDevice((DevDesc*) dd);
     #else
       GEaddDevice2(dd, "devHPGL");
