@@ -1,5 +1,5 @@
-devSVG <- function (file = "Rplots.hpgl", width = 10, height = 8,
-                    bg = "white", fg = "black", onefile = TRUE, xmlHeader = TRUE)
+devHPGL <- function (file = "Rplots.hpgl", width = 10, height = 8,
+                     bg = "white", fg = "black", onefile = TRUE, xmlHeader = TRUE)
 {
   dev <- .C("do_HPGL", as.character(file),
             as.character(bg),as.character(fg),
