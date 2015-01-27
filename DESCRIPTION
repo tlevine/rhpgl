@@ -1,3 +1,12 @@
-Based on RSvgDevice
-
-That is GPL. Can this be AGPL, or does it have to be GPL?
+Package: rhpgl
+Version: 0.0.1
+Date: 2015-01-27
+Title: RHPGL
+Authors@R: c(
+  person("Thomas", "Levine",
+    role = c("aut", "cre"),
+    email = "_@thomaslevine.com"))
+Depends:
+    R (>= 2.14),
+Description: A Hewlett-Packard Graphics Language (HPGL) device
+License: AGPL
