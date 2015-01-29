@@ -124,6 +124,12 @@ static void HPGL_Clip(double x0, double x1, double y0, double y1, pDevDesc dd) {
 static void HPGL_NewPage(const pGEcontext gc, pDevDesc dd) {
   HPGLDesc *ptd = (HPGLDesc *) dd->deviceSpecific;
   fprintf(ptd->texfp, "PG;");
+  fprintf(ptd->texfp, "IP");
+  fprintf(ptd->texfp, "SC");
+  dd->left = 0; /* left */
+  dd->right = width; /* right */
+  dd->bottom = height; /* bottom */
+  dd->top = 0; /* top */
 }
 
 static void HPGL_Size(double *left, double *right,
@@ -252,8 +258,7 @@ static void HPGL_Raster(unsigned int *raster, int w, int h,
 }
 
 Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
-                          double width, double height, Rboolean debug,
-                          Rboolean xmlHeader, Rboolean onefile) {
+                          double width, double height, double ipr) {
   HPGLDesc *ptd;
 
   if (!(ptd = (HPGLDesc *) malloc(sizeof(HPGLDesc))))
@@ -322,9 +327,7 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
   dd->yCharOffset = 0; /*0.3333;*/
   dd->yLineBias = 0; /*0.1;*/
 
-  // 1016 plotter units per inch
-  // https://en.wikipedia.org/wiki/HPGL
-  dd->ipr[0] = dd->ipr[1] = 1. / 1016;
+  dd->ipr[0] = dd->ipr[1] = ipr;
 
   dd->canClip = FALSE;
   dd->canHAdj = 0;
@@ -340,9 +343,9 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
 }
 
 
-static pGEDevDesc RHpglDevice(char **file, char **bg, char **fg, double *width,
-                              double *height, int *debug, int *xmlHeader,
-                              int *onefile) {
+static pGEDevDesc RHpglDevice(char **file, char **bg,
+                              char **fg, double *width,
+                              double *height, double *ipr) {
   pGEDevDesc dd;
   pDevDesc dev;
 
@@ -356,8 +359,8 @@ static pGEDevDesc RHpglDevice(char **file, char **bg, char **fg, double *width,
     if (!(dev = (pDevDesc) Calloc(1, NewDevDesc)))
       error("unable to allocate memory for NewDevDesc");
     
-    if (!HPGLDeviceDriver(dev, file[0], bg[0], fg[0], width[0], height[0],
-        debug[0], xmlHeader[0], onefile[0])) {
+    if (!HPGLDeviceDriver(dev, file[0], bg[0], fg[0],
+                          width[0], height[0], ipr[0]) {
       free(dev);
       error("unable to start HPGL device");
     }
