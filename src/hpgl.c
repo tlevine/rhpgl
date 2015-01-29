@@ -33,6 +33,7 @@ typedef struct {
   int landscape;
   double width;
   double height;
+  double ipr;
   double pagewidth;
   double pageheight;
   double xlast;
@@ -49,10 +50,6 @@ typedef struct {
   int bg;
   int fontsize;
   int fontface;
-  Rboolean debug;
-  Rboolean xmlHeader;
-  Rboolean onefile; /* drop headers etc*/
-
 } HPGLDesc;
 
 static void HPGL_Activate( pDevDesc);
@@ -101,7 +98,6 @@ static void HPGL_MetricInfo(int c, const pGEcontext gc, double* ascent,
 }
 
 static Rboolean HPGL_Open(pDevDesc dd, HPGLDesc *ptd) {
-  ptd->debug = FALSE;
   if (!(ptd->texfp = (FILE *) fopen(R_ExpandFileName(ptd->filename), "w")))
     return FALSE;
 
@@ -126,10 +122,10 @@ static void HPGL_NewPage(const pGEcontext gc, pDevDesc dd) {
   fprintf(ptd->texfp, "PG;");
   fprintf(ptd->texfp, "IP");
   fprintf(ptd->texfp, "SC");
-  dd->left = 0; /* left */
-  dd->right = width; /* right */
-  dd->bottom = height; /* bottom */
-  dd->top = 0; /* top */
+//dd->left = 0; /* left */
+//dd->right = width; /* right */
+//dd->bottom = height; /* bottom */
+//dd->top = 0; /* top */
 }
 
 static void HPGL_Size(double *left, double *right,
@@ -306,8 +302,7 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
   dd->top = 0; /* top */
   ptd->width = width;
   ptd->height = height;
-  ptd->xmlHeader = xmlHeader;
-  ptd->onefile = onefile;
+  ptd->ipr = ipr;
 
   if (!HPGL_Open(dd, ptd))
     return FALSE;
@@ -327,7 +322,7 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
   dd->yCharOffset = 0; /*0.3333;*/
   dd->yLineBias = 0; /*0.1;*/
 
-  dd->ipr[0] = dd->ipr[1] = ipr;
+  // dd->ipr[0] = dd->ipr[1] = ipr;
 
   dd->canClip = FALSE;
   dd->canHAdj = 0;
@@ -335,7 +330,6 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
 
   ptd->lty = 1;
   ptd->pageno = 0;
-  ptd->debug = debug;
 
   dd->deviceSpecific = (void *) ptd;
   dd->displayListOn = FALSE;
@@ -349,9 +343,6 @@ static pGEDevDesc RHpglDevice(char **file, char **bg,
   pGEDevDesc dd;
   pDevDesc dev;
 
-  if (debug[0] == NA_LOGICAL)
-    debug = FALSE;
-
   R_GE_checkVersionOrDie(R_GE_version);
   R_CheckDeviceAvailable();
 
@@ -360,7 +351,7 @@ static pGEDevDesc RHpglDevice(char **file, char **bg,
       error("unable to allocate memory for NewDevDesc");
     
     if (!HPGLDeviceDriver(dev, file[0], bg[0], fg[0],
-                          width[0], height[0], ipr[0]) {
+                          width[0], height[0], ipr[0])) {
       free(dev);
       error("unable to start HPGL device");
     }
@@ -377,10 +368,10 @@ static pGEDevDesc RHpglDevice(char **file, char **bg,
   return (dd);
 }
 
-void do_HPGL(char **file, char **bg, char **fg, double *width, double *height,
-             int *debug, int *xmlHeader, int *onefile) {
+void do_HPGL(char **file, char **bg, char **fg, double *width,
+             double *height, double *ipr) {
   char *vmax;
   vmax = vmaxget();
-  RHpglDevice(file, bg, fg, width, height, debug, xmlHeader, onefile);
+  RHpglDevice(file, bg, fg, width, height, ipr);
   vmaxset(vmax);
 }
