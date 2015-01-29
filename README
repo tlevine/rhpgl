@@ -1,13 +1,13 @@
 Example
 
   library(rhpgl)
-  hpgl('/tmp/plot.hpgl')
+  hpgl('/tmp/iris.hpgl')
   plot(iris)
   dev.off()
 
 View the file with hp2xx
 
-  hp2xx /tmp/plot.hpgl
+  hp2xx /tmp/iris.hpgl
 
 Helpful help
 
