@@ -34,6 +34,8 @@ typedef struct {
   double width;
   double height;
   double ipr;
+  char *ip;
+  char *sc;
   double pagewidth;
   double pageheight;
   double xlast;
@@ -254,7 +256,8 @@ static void HPGL_Raster(unsigned int *raster, int w, int h,
 }
 
 Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
-                          double width, double height, double ipr) {
+                          double width, double height, double ipr,
+                          char *ip, char *sc) {
   HPGLDesc *ptd;
 
   if (!(ptd = (HPGLDesc *) malloc(sizeof(HPGLDesc))))
@@ -303,6 +306,8 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
   ptd->width = width;
   ptd->height = height;
   ptd->ipr = ipr;
+  ptd->ip = ip;
+  ptd->sc = sc;
 
   if (!HPGL_Open(dd, ptd))
     return FALSE;
@@ -339,7 +344,8 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
 
 static pGEDevDesc RHpglDevice(char **file, char **bg,
                               char **fg, double *width,
-                              double *height, double *ipr) {
+                              double *height, double *ipr,
+                              char **ip, char **sc) {
   pGEDevDesc dd;
   pDevDesc dev;
 
@@ -351,7 +357,8 @@ static pGEDevDesc RHpglDevice(char **file, char **bg,
       error("unable to allocate memory for NewDevDesc");
     
     if (!HPGLDeviceDriver(dev, file[0], bg[0], fg[0],
-                          width[0], height[0], ipr[0])) {
+                          width[0], height[0], ipr[0],
+                          ip[0], sc[0])) {
       free(dev);
       error("unable to start HPGL device");
     }
@@ -369,9 +376,9 @@ static pGEDevDesc RHpglDevice(char **file, char **bg,
 }
 
 void do_HPGL(char **file, char **bg, char **fg, double *width,
-             double *height, double *ipr) {
+             double *height, double *ipr, char *ip, char *sc) {
   char *vmax;
   vmax = vmaxget();
-  RHpglDevice(file, bg, fg, width, height, ipr);
+  RHpglDevice(file, bg, fg, width, height, ipr, ip, sc);
   vmaxset(vmax);
 }
