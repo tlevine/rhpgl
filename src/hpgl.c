@@ -26,11 +26,6 @@ typedef R_GE_gcontext* pGEcontext;
 # define END_SUSPEND_INTERRUPTS
 #endif
 
-/* device-specific information per SVG device */
-
-#define DOTSperIN       72.27
-#define in2dots(x)      (DOTSperIN * x)
-
 typedef struct {
   FILE *texfp;
   char filename[1024];
@@ -111,6 +106,7 @@ static Rboolean HPGL_Open(pDevDesc dd, HPGLDesc *ptd) {
     return FALSE;
 
   fprintf(ptd->texfp, "IN;IP;");
+//fprintf(ptd->texfp, "SC0,100,0,100;");
   fprintf(ptd->texfp, "SP%d;", dd->startcol);
   // dd->startfill;
   return TRUE;
@@ -299,8 +295,8 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
   /* Screen Dimensions in Pixels */
 
   dd->left = 0; /* left */
-  dd->right = in2dots(width);/* right */
-  dd->bottom = in2dots(height); /* bottom */
+  dd->right = width; /* right */
+  dd->bottom = height; /* bottom */
   dd->top = 0; /* top */
   ptd->width = width;
   ptd->height = height;
@@ -324,10 +320,6 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
   dd->xCharOffset = 0; /*0.4900;*/
   dd->yCharOffset = 0; /*0.3333;*/
   dd->yLineBias = 0; /*0.1;*/
-
-  /* Inches per Raster Unit */
-  /* We use printer points, i.e. 72.27 dots per inch : */
-  dd->ipr[0] = dd->ipr[1] = 1. / DOTSperIN;
 
   dd->canClip = FALSE;
   dd->canHAdj = 0;
