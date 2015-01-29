@@ -322,6 +322,10 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
   dd->yCharOffset = 0; /*0.3333;*/
   dd->yLineBias = 0; /*0.1;*/
 
+  // 1016 plotter units per inch
+  // https://en.wikipedia.org/wiki/HPGL
+  dd->ipr[0] = dd->ipr[1] = 1. / 1016;
+
   dd->canClip = FALSE;
   dd->canHAdj = 0;
   dd->canChangeGamma = FALSE;
