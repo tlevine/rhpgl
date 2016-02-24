@@ -15,7 +15,8 @@ Helpful help
 
 grDevices source code, as an example of something similar
 
-* https://svn.r-project.org/R/trunk/src/library/grDevices/R/
-* https://svn.r-project.org/R/trunk/src/library/grDevices/src/
 * https://svn.r-project.org/R/trunk/src/library/grDevices/R/cairo.R
 * https://svn.r-project.org/R/trunk/src/library/grDevices/src/devCairo.c
+* https://svn.r-project.org/R/trunk/src/include/Rinternals.h
+* https://svn.r-project.org/R/trunk/src/include/R_ext/Boolean.h
+* https://svn.r-project.org/R/trunk/src/include/R_ext/GraphicsEngine.h
