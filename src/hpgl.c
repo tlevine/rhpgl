@@ -33,7 +33,6 @@ typedef struct {
   int landscape;
   double width;
   double height;
-  double ipr;
   char *ip;
   char *sc;
   double pagewidth;
@@ -256,7 +255,7 @@ static void HPGL_Raster(unsigned int *raster, int w, int h,
 }
 
 Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
-                          double width, double height, double ipr,
+                          double width, double height,
                           char *ip, char *sc) {
   HPGLDesc *ptd;
 
@@ -305,7 +304,6 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
   dd->top = 0; /* top */
   ptd->width = width;
   ptd->height = height;
-  ptd->ipr = ipr;
   ptd->ip = ip;
   ptd->sc = sc;
 
@@ -323,11 +321,12 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
   /* plotting character over the plotting point. */
   /* Pure guesswork and eyeballing ... */
 
-  dd->xCharOffset = 0; /*0.4900;*/
-  dd->yCharOffset = 0; /*0.3333;*/
-  dd->yLineBias = 0; /*0.1;*/
+  dd->xCharOffset = 0.4900;
+  dd->yCharOffset = 0.3333;
+  dd->yLineBias = 0.1;
 
-  // dd->ipr[0] = dd->ipr[1] = ipr;
+  // Inches per point?
+  dd->ipr[0] = dd->ipr[1] = 1.0 / 72.0;
 
   dd->canClip = FALSE;
   dd->canHAdj = 0;
@@ -344,7 +343,7 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
 
 static pGEDevDesc RHpglDevice(char **file, char **bg,
                               char **fg, double *width,
-                              double *height, double *ipr,
+                              double *height,
                               char **ip, char **sc) {
   pGEDevDesc dd;
   pDevDesc dev;
@@ -357,7 +356,7 @@ static pGEDevDesc RHpglDevice(char **file, char **bg,
       error("unable to allocate memory for NewDevDesc");
     
     if (!HPGLDeviceDriver(dev, file[0], bg[0], fg[0],
-                          width[0], height[0], ipr[0],
+                          width[0], height[0],
                           ip[0], sc[0])) {
       free(dev);
       error("unable to start HPGL device");
@@ -376,9 +375,9 @@ static pGEDevDesc RHpglDevice(char **file, char **bg,
 }
 
 void do_HPGL(char **file, char **bg, char **fg, double *width,
-             double *height, double *ipr, char *ip, char *sc) {
+             double *height, char *ip, char *sc) {
   char *vmax;
   vmax = vmaxget();
-  RHpglDevice(file, bg, fg, width, height, ipr, ip, sc);
+  RHpglDevice(file, bg, fg, width, height, ip, sc);
   vmaxset(vmax);
 }
