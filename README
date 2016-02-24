@@ -20,3 +20,4 @@ grDevices source code, as an example of something similar
 * https://svn.r-project.org/R/trunk/src/include/Rinternals.h
 * https://svn.r-project.org/R/trunk/src/include/R_ext/Boolean.h
 * https://svn.r-project.org/R/trunk/src/include/R_ext/GraphicsEngine.h
+* https://svn.r-project.org/R/trunk/src/library/graphics/src/par.c
