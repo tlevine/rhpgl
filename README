@@ -12,3 +12,10 @@ View the file with hp2xx
 Helpful help
 
 * http://cran.r-project.org/doc/manuals/r-release/R-ints.html
+
+grDevices source code, as an example of something similar
+
+* https://svn.r-project.org/R/trunk/src/library/grDevices/R/
+* https://svn.r-project.org/R/trunk/src/library/grDevices/src/
+* https://svn.r-project.org/R/trunk/src/library/grDevices/R/cairo.R
+* https://svn.r-project.org/R/trunk/src/library/grDevices/src/devCairo.c
