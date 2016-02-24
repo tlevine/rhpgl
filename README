@@ -13,7 +13,11 @@ Helpful help
 
 * http://cran.r-project.org/doc/manuals/r-release/R-ints.html
 
-grDevices source code, as an example of something similar
+svglite, as an example of something similar
+
+    git@github.com:hadley/svglite.git
+
+grDevices source code, as an example of something more complicated
 
 * https://svn.r-project.org/R/trunk/src/library/grDevices/R/cairo.R
 * https://svn.r-project.org/R/trunk/src/library/grDevices/src/devCairo.c
