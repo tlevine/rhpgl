@@ -15,7 +15,8 @@ Helpful help
 
 svglite, as an example of something similar
 
-    git@github.com:hadley/svglite.git
+    git clone git@github.com:hadley/svglite.git
+    git checkout 891aca3a0340e097be1cdefb7e347263ff72a84d
 
 grDevices source code, as an example of something more complicated
 
