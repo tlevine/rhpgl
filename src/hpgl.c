@@ -323,11 +323,11 @@ Rboolean HPGLDeviceDriver(pDevDesc dd, char *filename, char *bg, char *fg,
   /* plotting character over the plotting point. */
   /* Pure guesswork and eyeballing ... */
 
-  dd->xCharOffset = 0; /*0.4900;*/
-  dd->yCharOffset = 0; /*0.3333;*/
-  dd->yLineBias = 0; /*0.1;*/
+  dd->xCharOffset = 0.4900;
+  dd->yCharOffset = 0.3333;
+  dd->yLineBias = 0.1;
 
-  // dd->ipr[0] = dd->ipr[1] = ipr;
+  dd->ipr[0] = dd->ipr[1] = dd->ipr[2] = dd->ipr[3] = ipr;
 
   dd->canClip = FALSE;
   dd->canHAdj = 0;
